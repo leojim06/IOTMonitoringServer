@@ -52,7 +52,9 @@ def analyze_data_fire_alarm():
             print("Datos medidos: {} - {} - {} - {}".format(variable, max_value, min_value, item["check_value"]))
 
             temperature_data = item['values']
-            for t in temperature_data:
+            temperature_data.reverse()
+            last_temperature_medition = temperature_data[:5]
+            for t in last_temperature_medition:
                 print("Temperatura: {}".format(t))
 
 
