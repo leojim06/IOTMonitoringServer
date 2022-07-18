@@ -57,7 +57,7 @@ def analyze_data_fire_alarm():
 
             fire_alarm = False
 
-            if (len(last_temperature_medition) > 5):
+            if (len(last_temperature_medition) >= 5):
                 for t in last_temperature_medition:
                     print("Temperatura: {}".format(t))
 
