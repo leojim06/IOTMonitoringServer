@@ -10,6 +10,55 @@ from django.conf import settings
 
 client = mqtt.Client(settings.MQTT_USER_PUB)
 
+def analyze_data_fire_alarm():
+    # Consulta todos los datos del último minuto, los agrupa por estación y variable
+    # Compara el promedio de la temperatura.
+    # Si el promedio se excede de los límites, se envia un mensaje de alerta.
+
+    print("Calculando alerta de fuego")
+
+    data = Data.objects.filter(
+        base_time__gte=datetime.now() - timedelta(minutes=1))
+    aggregation = data.annotate(check_value=Avg('avg_value')) \
+        .select_related('station', 'measurement') \
+        .select_related('station__user', 'station__location') \
+        .select_related('station__location__city', 'station__location__state',
+                        'station__location__country') \
+        .values('check_value', 'station__user__username',
+                'measurement__name',
+                'measurement__max_value',
+                'measurement__min_value',
+                'station__location__city__name',
+                'station__location__state__name',
+                'station__location__country__name')
+    alerts = 0
+    for item in aggregation:
+        alert = False
+
+        variable = item["measurement__name"]
+        max_value = item["measurement__max_value"] or 0
+        min_value = item["measurement__min_value"] or 0
+
+        country = item['station__location__country__name']
+        state = item['station__location__state__name']
+        city = item['station__location__city__name']
+        user = item['station__user__username']
+
+        print("Datos usuario: {} - {} - {} - {}".format(country, state, city, user))
+        print("Datos medidos: {} - {} - {} - {}".format(variable, max_value, min_value, item["check_value"]))
+
+        if item["check_value"] > max_value or item["check_value"] < min_value:
+            alert = True
+
+        if alert:
+            message = "ALERT {} {} {}".format(variable, min_value, max_value)
+            topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
+            print(datetime.now(), "Sending alert to {} {}".format(topic, variable))
+            client.publish(topic, message)
+            alerts += 1
+
+    print(len(aggregation), "dispositivos revisados")
+    print(alerts, "alertas enviadas")
 
 def analyze_data():
     # Consulta todos los datos de la última hora, los agrupa por estación y variable
@@ -98,6 +147,17 @@ def setup_mqtt():
 
     except Exception as e:
         print('Ocurrió un error al conectar con el bróker MQTT:', e)
+
+def start_cron_fire_alert():
+    '''
+    Inicia el cron que se encarga de ejecutar la función fire_alarm cada minuto.
+    '''
+    print("Iniciando cron fire_alarm...")
+    schedule.every(1).minutes.do(analyze_data_fire_alarm)
+    print("Servicio de control iniciado - Fire alarm")
+    while 1:
+        schedule.run_pending()
+        time.sleep(1)
 
 
 def start_cron():
