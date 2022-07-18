@@ -62,7 +62,7 @@ def analyze_data_fire_alarm():
                     print("Temperatura: {}".format(t))
 
                 fire_alarm = all(t > 35 for t in last_temperature_medition)
-                print("alarma activada: ".format(fire_alarm))
+                print("alarma activada: {}".format(fire_alarm))
 
             if fire_alarm:
                 message = "FIRE"
