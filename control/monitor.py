@@ -53,15 +53,15 @@ def analyze_data_fire_alarm():
 
             temperature_data = item['values']
             temperature_data.reverse()
-            last_temperature_medition = temperature_data[:5]
+            last_temperature_medition = temperature_data[:3]
 
             fire_alarm = False
 
-            if (len(last_temperature_medition) >= 5):
+            if (len(last_temperature_medition) >= 3):
                 for t in last_temperature_medition:
                     print("Temperatura: {}".format(t))
 
-                fire_alarm = all(t > 28 for t in last_temperature_medition)
+                fire_alarm = all(t > 35 for t in last_temperature_medition)
                 print("alarma activada: {}".format(fire_alarm))
 
             if fire_alarm:
@@ -70,38 +70,6 @@ def analyze_data_fire_alarm():
                 print(datetime.now(), "Sending alert to {} - FIRE".format(topic))
                 client.publish(topic, message)
 
-
-    # alerts = 0
-    # print("Datos evaluados de aggregation")
-    # print(aggregation)
-    # for item in aggregation:
-    #     alert = False
-
-    #     variable = item["measurement__name"]
-    #     max_value = item["measurement__max_value"] or 0
-    #     min_value = item["measurement__min_value"] or 0
-
-    #     country = item['station__location__country__name']
-    #     state = item['station__location__state__name']
-    #     city = item['station__location__city__name']
-    #     user = item['station__user__username']
-
-    #     print("Datos evaluados en for aggregation")
-    #     print("Datos usuario: {} - {} - {} - {}".format(country, state, city, user))
-    #     print("Datos medidos: {} - {} - {} - {}".format(variable, max_value, min_value, item["check_value"]))
-
-    #     if item["check_value"] > max_value or item["check_value"] < min_value:
-    #         alert = True
-
-    #     if alert:
-    #         message = "ALERT {} {} {}".format(variable, min_value, max_value)
-    #         topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
-    #         print(datetime.now(), "Sending alert to {} {}".format(topic, variable))
-    #         client.publish(topic, message)
-    #         alerts += 1
-
-    # print(len(aggregation), "dispositivos revisados")
-    # print(alerts, "alertas enviadas")
 
 def analyze_data():
     # Consulta todos los datos de la última hora, los agrupa por estación y variable
