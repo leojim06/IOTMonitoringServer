@@ -32,6 +32,8 @@ def analyze_data_fire_alarm():
                 'station__location__state__name',
                 'station__location__country__name')
     alerts = 0
+    print("Datos evaluados de aggregation")
+    print(aggregation)
     for item in aggregation:
         alert = False
 
@@ -44,6 +46,7 @@ def analyze_data_fire_alarm():
         city = item['station__location__city__name']
         user = item['station__user__username']
 
+        print("Datos evaluados en for aggregation")
         print("Datos usuario: {} - {} - {} - {}".format(country, state, city, user))
         print("Datos medidos: {} - {} - {} - {}".format(variable, max_value, min_value, item["check_value"]))
 
