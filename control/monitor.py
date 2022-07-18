@@ -25,7 +25,9 @@ def analyze_data_fire_alarm():
         .select_related('station__user', 'station__location') \
         .select_related('station__location__city', 'station__location__state',
                         'station__location__country') \
-        .values('check_value', 'station__user__username',
+        .values('check_value', 
+                'values',
+                'station__user__username',
                 'measurement__name',
                 'measurement__max_value',
                 'measurement__min_value',
@@ -35,17 +37,23 @@ def analyze_data_fire_alarm():
     
     for item in aggregation:
         variable = item["measurement__name"]
-        max_value = item["measurement__max_value"] or 0
-        min_value = item["measurement__min_value"] or 0
+        if(variable=='temperatura'):
 
-        country = item['station__location__country__name']
-        state = item['station__location__state__name']
-        city = item['station__location__city__name']
-        user = item['station__user__username']
+            max_value = item["measurement__max_value"] or 0
+            min_value = item["measurement__min_value"] or 0
 
-        print("Datos evaluados en for aggregation")
-        print("Datos usuario: {} - {} - {} - {}".format(country, state, city, user))
-        print("Datos medidos: {} - {} - {} - {}".format(variable, max_value, min_value, item["check_value"]))
+            country = item['station__location__country__name']
+            state = item['station__location__state__name']
+            city = item['station__location__city__name']
+            user = item['station__user__username']
+
+            print("Datos evaluados en for aggregation")
+            print("Datos usuario: {} - {} - {} - {}".format(country, state, city, user))
+            print("Datos medidos: {} - {} - {} - {}".format(variable, max_value, min_value, item["check_value"]))
+
+            temperature_data = item['values']
+            for t in temperature_data:
+                print("Temperatura: {}".format(t))
 
 
     # alerts = 0
