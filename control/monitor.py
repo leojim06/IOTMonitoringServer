@@ -17,8 +17,12 @@ def analyze_data_fire_alarm():
 
     print("Calculando alerta de fuego")
 
-    data = Data.objects.filter(
-        base_time__gte=datetime.now() - timedelta(minutes=1))
+    data = Data.objects.order_by('-time')[:2]
+    print("Data>")
+    for item in data:
+        print(data["base_time"])
+
+
     aggregation = data.annotate(check_value=Avg('avg_value')) \
         .select_related('station', 'measurement') \
         .select_related('station__user', 'station__location') \
