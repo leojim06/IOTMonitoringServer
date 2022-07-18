@@ -20,7 +20,7 @@ def analyze_data_fire_alarm():
     data = Data.objects.order_by('-time')[:2]
 
 
-    aggregation = data.annotate(check_value='time') \
+    aggregation = data.annotate(check_value=Avg('avg_value')) \
         .select_related('station', 'measurement') \
         .select_related('station__user', 'station__location') \
         .select_related('station__location__city', 'station__location__state',
