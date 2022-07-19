@@ -11,7 +11,7 @@ from django.conf import settings
 client = mqtt.Client(settings.MQTT_USER_PUB)
 
 def analyze_data_fire_alarm():
-    # Consulta todos los datos del último minuto, los agrupa por estación y variable
+    # Consulta ultimos dos registros, los agrupa por estación y variable
     # Compara el promedio de la temperatura.
     # Si el promedio se excede de los límites, se envia un mensaje de alerta.
 
@@ -37,6 +37,7 @@ def analyze_data_fire_alarm():
     
     for item in aggregation:
         variable = item["measurement__name"]
+        
         if(variable=='temperatura'):
 
             max_value = item["measurement__max_value"] or 0
