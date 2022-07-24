@@ -48,7 +48,7 @@ const char pass[] = "123456789"; // TODO cambiar por la contraseña de la red Wi
 
 //Conexión a Mosquitto
 #define USER "testuser1" // TODO Reemplace UsuarioMQTT por un usuario (no administrador) que haya creado en la configuración del bróker de MQTT.
-const char MQTT_HOST[] = "18.207.143.97"; // TODO Reemplace ip.maquina.mqtt por la IP del bróker MQTT que usted desplegó. Ej: 192.168.0.1
+const char MQTT_HOST[] = "54.221.65.131"; // TODO Reemplace ip.maquina.mqtt por la IP del bróker MQTT que usted desplegó. Ej: 192.168.0.1
 const int MQTT_PORT = 8082;
 const char MQTT_USER[] = USER;//Contraseña de MQTT
 const char MQTT_PASS[] = "testuser1"; // TODO Reemplace ContrasenaMQTT por la contraseña correpondiente al usuario especificado.
@@ -427,21 +427,7 @@ void measure() {
     
     temp = readTemperatura();
     humi = readHumedad();
-
-
-    if(fire_count_hack > 5)
-    {
-      Serial.println("\nHACK activado...");
-      Serial.print("Temperatura original: ");
-      Serial.print(temp);
-      Serial.print(" *C ");
-      temp = 2 * temp;
-      Serial.print("\nNueva temperatura :");
-      Serial.print(temp);
-      Serial.print(" *C ");
-    }
-
-    
+       
     // Se chequea si los valores son correctos
     if (checkMeasures(temp, humi)) {
       // Se envían los datos
